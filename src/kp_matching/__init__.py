@@ -1,4 +1,4 @@
-from .det_match_container import DetMatchResult
+from .paired_detection_result import PairedDetectionResult
 from .kp_matching import KPMatchingProcessor
 from .match_container import MatchResult
 from .method import KPMatchMethod
@@ -15,7 +15,7 @@ from .visualizer import (
     )
 
 __all__ = [
-    "DetMatchResult",
+    "PairedDetectionResult",
     "KPMatchMethod",
     "KPMatchingProcessor",
     "MatchResult",

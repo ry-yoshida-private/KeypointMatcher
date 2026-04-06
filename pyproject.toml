@@ -31,3 +31,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 kp_matching = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test.py", "test_*.py", "*_test.py"]

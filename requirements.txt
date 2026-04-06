@@ -1,3 +1,4 @@
 numpy
+pytest
 opencv-contrib-python
 kp_detection @ git+https://github.com/ry-yoshida-private/KeypointDetector.git

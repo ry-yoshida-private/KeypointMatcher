@@ -8,7 +8,7 @@ from kp_detection import KPDetectionResult
 from .match_container import MatchResult
 
 @dataclass
-class DetMatchResult:
+class PairedDetectionResult:
     """
     Container for keypoint matching result, including query and gallery keypoint detection results and match result.
 
@@ -84,7 +84,7 @@ class DetMatchResult:
     def filter_by_ransac(
         self, 
         ransac_th: float = 3.0
-        ) -> DetMatchResult:
+        ) -> PairedDetectionResult:
         """
         Filter the matches by RANSAC.
 
@@ -95,7 +95,7 @@ class DetMatchResult:
 
         Returns:
         ----------
-        DetMatchResult: Filtered matches by RANSAC.
+        PairedDetectionResult: Filtered matches by RANSAC.
         """
         _, ransac_mask = cv2.findHomography(
             srcPoints=self.query_matched_coordinates,
@@ -114,6 +114,6 @@ class DetMatchResult:
             )
 
     def __str__(self) -> str:
-        return f"DetMatchResult(query_det_result={self.query_det_result}, \
+        return f"PairedDetectionResult(query_det_result={self.query_det_result}, \
         gallery_det_result={self.gallery_det_result}, \
         match_result={self.match_result})"
