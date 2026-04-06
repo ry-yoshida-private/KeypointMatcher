@@ -25,12 +25,12 @@ class FLANNIndexType(IntEnum):
     FLANN_INDEX_AUTOTUNED: int
         The autotuned index type.
     """
-    FLANN_INDEX_LINEAR              = 0
-    FLANN_INDEX_KDTREE              = 1
-    FLANN_INDEX_KMEANS              = 2
-    FLANN_INDEX_COMPOSITE           = 3
-    FLANN_INDEX_KDTREE_SINGLE       = 4
-    FLANN_INDEX_HIERARCHICAL        = 5
-    FLANN_INDEX_LSH                 = 6 # For binary descriptors
-    FLANN_INDEX_SAVED               = 7
-    FLANN_INDEX_AUTOTUNED           = 8
+    LINEAR              = 0
+    KDTREE              = 1
+    KMEANS              = 2
+    COMPOSITE           = 3
+    KDTREE_SINGLE       = 4
+    HIERARCHICAL        = 5
+    LSH                 = 6 # For binary descriptors
+    SAVED               = 7
+    AUTOTUNED           = 8
