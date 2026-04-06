@@ -6,23 +6,23 @@ class FLANNIndexType(IntEnum):
 
     Attributes:
     ----------
-    FLANN_INDEX_LINEAR: int
+    LINEAR: int
         The linear index type.
-    FLANN_INDEX_KDTREE: int
+    KDTREE: int
         The KD-tree index type.
-    FLANN_INDEX_KMEANS: int
+    KMEANS: int
         The K-means index type.
-    FLANN_INDEX_COMPOSITE: int
+    COMPOSITE: int
         The composite index type.
-    FLANN_INDEX_KDTREE_SINGLE: int
+    KDTREE_SINGLE: int
         The single KD-tree index type.
-    FLANN_INDEX_HIERARCHICAL: int
+    HIERARCHICAL: int
         The hierarchical index type.
-    FLANN_INDEX_LSH: int
+    LSH: int
         The LSH index type.
-    FLANN_INDEX_SAVED: int
+    SAVED: int
         The saved index type.
-    FLANN_INDEX_AUTOTUNED: int
+    AUTOTUNED: int
         The autotuned index type.
     """
     LINEAR              = 0
