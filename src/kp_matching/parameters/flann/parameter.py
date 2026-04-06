@@ -26,7 +26,7 @@ class FLANNParameters:
     trees: int
         The number of trees to use for the FLANN matcher.
     """
-    algorithm: FLANNIndexType = FLANNIndexType.FLANN_INDEX_KDTREE
+    algorithm: FLANNIndexType = FLANNIndexType.KDTREE
     table_number: int = 6
     key_size: int = 12
     multi_probe_level: int = 1
