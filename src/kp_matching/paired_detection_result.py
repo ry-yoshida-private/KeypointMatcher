@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import cv2
+import warnings
 import numpy as np
 from dataclasses import dataclass
 from kp_detection import KPDetectionResult
@@ -96,21 +97,23 @@ class PairedDetectionResult:
         Returns:
         ----------
         PairedDetectionResult: Filtered matches by RANSAC.
-        """
-        _, ransac_mask = cv2.findHomography(
-            srcPoints=self.query_matched_coordinates,
-            dstPoints=self.gallery_matched_coordinates,
-            method=cv2.RANSAC,
-            ransacReprojThreshold=ransac_th
-            ) # _: shape(3, 3) np.ndarray , mask: shape(n, 1) np.ndarray *0: outlier, *1: inlier
+        """        
+        _, ransac_mask = cv2.findFundamentalMat(
+            points1=self.query_matched_coordinates,
+            points2=self.gallery_matched_coordinates,
+            method=cv2.FM_RANSAC, 
+            ransacReprojThreshold=ransac_th 
+        ) # _: shape(3, 3) np.ndarray , mask: shape(n, 1) np.ndarray *0: outlier, *1: inlier
 
-        ransac_mask = ransac_mask.flatten().astype(bool) 
-        matches = [match for match, is_inlier in zip(self.match_result.matches, ransac_mask) if is_inlier]
-        match_result = MatchResult(matches=matches) # type: ignore
+        if ransac_mask is None:
+            warnings.warn("RANSAC failed to find a valid fundamental matrix. Returning the original matches.")
+            return self
+        inlier_indices = np.where(ransac_mask.ravel() == 1)[0]
+        matches = [self.match_result.matches[i] for i in inlier_indices]
         return self.__class__(
             query_det_result=self.query_det_result,
             gallery_det_result=self.gallery_det_result,
-            match_result=match_result
+            match_result=MatchResult(matches=matches)
             )
 
     def __str__(self) -> str:
