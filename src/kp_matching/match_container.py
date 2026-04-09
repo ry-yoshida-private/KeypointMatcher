@@ -75,7 +75,8 @@ class MatchResult:
 
         distances = np.array([(m[0].distance, m[1].distance) for m in knn_matches])
         ratios = distances[:, 0] / (distances[:, 1] + np.finfo(float).eps)
-        good_matches = [m for m, r in zip(knn_matches, ratios) if r < threshold]
+        indices = np.where(ratios < threshold)[0]
+        good_matches = [knn_matches[i] for i in indices]
         return MatchResult(matches=good_matches)
 
     def sort_by_distance(self) -> None:
