@@ -4,9 +4,12 @@ import cv2
 import warnings
 import numpy as np
 from dataclasses import dataclass
+from typing import cast
 from kp_detection import KPDetectionResult
 
+from opencv_utility import OpenCVOutlierFilteringFlag
 from .match_container import MatchResult
+from .utils import GeometricConstraint
 
 @dataclass
 class PairedDetectionResult:
@@ -82,39 +85,53 @@ class PairedDetectionResult:
                 raise ValueError("Gallery descriptors are not available.")
         return np.array([self.gallery_det_result.descriptors[match.trainIdx] for match in self.match_result])
 
-    def filter_by_ransac(
+    def filter_outliers(
         self, 
-        ransac_th: float = 3.0
+        outlier_th: float = 3.0,
+        outlier_filtering_flag: OpenCVOutlierFilteringFlag = OpenCVOutlierFilteringFlag.MAGSAC,
+        geometric_constraint: GeometricConstraint = GeometricConstraint.FUNDAMENTAL,
         ) -> PairedDetectionResult:
         """
-        Filter the matches by RANSAC.
+        Filter outliers from the matches.
 
         Parameters:
         ----------
-        ransac_th: float
-            RANSAC threshold.
+        outlier_th: float
+            Outlier threshold.
+        outlier_filtering_flag: OpenCVOutlierFilteringFlag
+            Outlier filtering flag.
+        geometric_constraint: GeometricConstraint
+            Geometric model used for outlier filtering.
 
         Returns:
         ----------
-        PairedDetectionResult: Filtered matches by RANSAC.
+        PairedDetectionResult: Filtered matches by outlier filtering process.
         """        
-        _, ransac_mask = cv2.findFundamentalMat(
-            points1=self.query_matched_coordinates,
-            points2=self.gallery_matched_coordinates,
-            method=cv2.FM_RANSAC, 
-            ransacReprojThreshold=ransac_th 
-        ) # _: shape(3, 3) np.ndarray , mask: shape(n, 1) np.ndarray *0: outlier, *1: inlier
+        mask = geometric_constraint.estimate_mask(
+            query_matched_coordinates=self.query_matched_coordinates,
+            gallery_matched_coordinates=self.gallery_matched_coordinates,
+            outlier_filtering_flag=outlier_filtering_flag,
+            outlier_th=outlier_th,
+        )
 
-        if ransac_mask is None:
-            warnings.warn("RANSAC failed to find a valid fundamental matrix. Returning the original matches.")
+        if mask is None or mask.size == 0:
+            warnings.warn(
+                f"Outlier filtering failed with {geometric_constraint.value} constraint. "
+                "Returning the original matches."
+            )
             return self
-        inlier_indices = np.where(ransac_mask.ravel() == 1)[0]
-        matches = [self.match_result.matches[i] for i in inlier_indices]
+        inlier_indices: list[int] = [int(i) for i in np.flatnonzero(mask.ravel() == 1)]
+        raw_matches = self.match_result.matches
+        filtered = [raw_matches[i] for i in inlier_indices]
+        homogenous_matches = cast(
+            list[cv2.DMatch] | list[tuple[cv2.DMatch, ...]],
+            filtered,
+        )
         return self.__class__(
             query_det_result=self.query_det_result,
             gallery_det_result=self.gallery_det_result,
-            match_result=MatchResult(matches=matches)
-            )
+            match_result=MatchResult(matches=homogenous_matches),
+        )
 
     def __str__(self) -> str:
         return f"PairedDetectionResult(query_det_result={self.query_det_result}, \

@@ -13,17 +13,30 @@ from .visualizer import (
     MatchingVisualizer, 
     DrawMatchFlags
     )
+from .utils import GeometricConstraint
+
+from opencv_utility import OpenCVOutlierFilteringFlag
 
 __all__ = [
-    "PairedDetectionResult",
     "KPMatchMethod",
     "KPMatchingProcessor",
+    # Result modules
     "MatchResult",
+    "PairedDetectionResult",
+    "GeometricConstraint",
+    # Visualizer modules
     "MatchingVisualizer",
     "DrawMatchFlags",
+    # Parameters modules
     "KPMatchingParameters",
+    ## Common parameters
     "KPMatchCommonParameters",
+    ## RatioTest parameters
     "RatioTestParameters",
+    ## FLANN parameters
     "FLANNParameters",
-    "FLANNIndexType"
+    "FLANNIndexType",
+    
+    # external modules
+    "OpenCVOutlierFilteringFlag"
     ]
